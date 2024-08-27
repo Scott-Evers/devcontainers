@@ -1,4 +1,5 @@
 [
     "base",
+    "devcon_golang",
     "devcon_rust"
 ]
