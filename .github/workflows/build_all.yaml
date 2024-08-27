@@ -1,7 +1,7 @@
 name: Build and publish all images
 
 on:
-  push:
+  # push:
   workflow_dispatch:
 
 jobs:
