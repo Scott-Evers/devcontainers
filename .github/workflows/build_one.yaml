@@ -24,9 +24,9 @@ jobs:
         uses: actions/checkout@v4
       - run: echo ${{ inputs.image }}
       - name: Docker Registry Login
-        run: echo ${{ secrets.DOCKERHUB_TKN }} | docker login -u ${{ variables.DOCKERHUB_USER }} --password-stdin
+        run: echo ${{ secrets.DOCKERHUB_TKN }} | docker login -u ${{ vars.DOCKERHUB_USER }} --password-stdin
       - name: Docker Build
-        run: docker build -t ${{ variables.DOCKERHUB_USER }}/${{ inputs.image }}:${VERSION_TAG} --build-arg="DEPENDENCY_VER=${VERSION_TAG}" ${{ inputs.image }}
+        run: docker build -t ${{ vars.DOCKERHUB_USER }}/${{ inputs.image }}:${VERSION_TAG} --build-arg="DEPENDENCY_VER=${VERSION_TAG}" ${{ inputs.image }}
       - run: docker image ls
       - name: Publish to Container Registry
-        run: docker push ${{ variables.DOCKERHUB_USER }}/${{ inputs.image }}:${VERSION_TAG}
+        run: docker push ${{ vars.DOCKERHUB_USER }}/${{ inputs.image }}:${VERSION_TAG}
