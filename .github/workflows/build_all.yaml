@@ -1,0 +1,28 @@
+name: Build and publish all images
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  identify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo Code
+        uses: actions/checkout@v4
+      - name: Get Filename Matrix
+        id: identify
+        run: echo "list=$(cat sequence.json | jq -c )" >> "$GITHUB_OUTPUT"
+    outputs:
+      matrix: ${{ steps.identify.outputs.list }}
+  trigger:
+    name: Trigger Build and Deploy for all Images
+    needs: [identify]
+    strategy:
+      max-parallel: 1
+      matrix:
+        value: ${{fromJson(needs.identify.outputs.matrix)}}
+    uses: ./.github/workflows/build_one.yaml
+    secrets: inherit
+    with:
+      IMAGE: ${{ matrix.value }}

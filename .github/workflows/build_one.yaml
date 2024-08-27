@@ -1,0 +1,32 @@
+name: Build and Publish Single DevContainer
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      image:
+        required: true
+        type: string
+        description: image
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+    env:
+      VERSION_TAG: ${{ github.ref_name == 'main' && 'latest' || github.sha }}
+    steps:
+      - name: Checkout Repo Code
+        uses: actions/checkout@v4
+      - run: echo ${{ inputs.image }}
+      - name: Docker Registry Login
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u gammawavegeek --password-stdin
+      - name: Docker Build
+        run: docker build -t ghcr.io/gamma-wave-solutions/${{ inputs.image }}:${VERSION_TAG} --build-arg="DEPENDENCY_VER=${VERSION_TAG}" ${{ inputs.image }}
+      - run: docker image ls
+      - name: Publish to Container Registry
+        run: docker push ghcr.io/gamma-wave-solutions/${{ inputs.image }}:${VERSION_TAG}
